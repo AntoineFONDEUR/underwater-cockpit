@@ -4,7 +4,7 @@
           "earlephilhower": {
               "boot2_source": "boot2_w25q16jvxq_4_padded_checksum.S",
               "usb_vid": "0x2E8A",
-              "usb_pid": "0x0001"
+              "usb_pid": "0x0002"
           }
       },
       "core": "earlephilhower",
@@ -32,7 +32,7 @@
   "frameworks": [
       "arduino"
   ],
-  "name": "Panneau 1",
+  "name": "Panneau 2",
   "upload": {
       "maximum_ram_size": 262144,
       "maximum_size": 16777216,

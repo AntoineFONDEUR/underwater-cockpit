@@ -7,5 +7,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println("Hello World!");
+  Serial.print("Board (from flag) n°");
+  Serial.print(BOARD_NUM);
+  Serial.print("\tBoard (from specific src) n°");
+  Serial.println(1);
 }
