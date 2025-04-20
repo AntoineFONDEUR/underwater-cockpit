@@ -11,6 +11,9 @@ Panel myPanel {
     new AxisInput("right_joystick_h", Pin{2, ADS}, 1, 0, 32767),
     new AxisInput("right_joystick_v", Pin{3, ADS}, 2, 0, 32767),
   },
+  {
+    new Led("led-intensity", 26)
+  },
   ADSSettings{1,ADS}
 };
 
@@ -22,6 +25,13 @@ void setup() {
 
 void loop() {
   digitalWrite(6, LOW);
-  myPanel.update_states();
+
+  // Inputs
+  myPanel.read_states();
   myPanel.send_states();
+
+  // Ouputs
+  myPanel.receive_target_states();
+  myPanel.write_target_states();
+
 }

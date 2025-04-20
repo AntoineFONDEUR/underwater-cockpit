@@ -22,7 +22,7 @@ class Input{
          : id{input_id}, pin{input_pin} {}
 
         virtual void begin() = 0;
-        virtual void update_state() = 0;
+        virtual void read_state() = 0;
         virtual void send_state() = 0;
 };
 
@@ -55,7 +55,7 @@ class AxisInput : public Input {
             }
         }
 
-        void update_state() override{
+        void read_state() override{
             float raw_data = get_raw_data();
             float normalized_data = (raw_data-min_range)/(max_range-min_range);
             state = invert ? 1.-normalized_data : normalized_data;
