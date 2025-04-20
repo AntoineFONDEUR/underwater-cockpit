@@ -35,6 +35,10 @@ class Panel{
 
         void begin(){
 
+            if (nb_of_inputs > 0){
+                Joystick.begin();
+            }
+
             if (ADS_settings.enabled){
                 Wire.begin();
                 ADS_settings.ADS->begin();
@@ -49,6 +53,12 @@ class Panel{
         void update_states(){
             for (int i=0; i<nb_of_inputs; i++){
                 inputs[i]->update_state();
+            }
+        }
+
+        void send_states(){
+            for (int i=0; i<nb_of_inputs; i++){
+                inputs[i]->send_state();
             }
         }
 
