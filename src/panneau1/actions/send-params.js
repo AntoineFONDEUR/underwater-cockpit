@@ -6,13 +6,15 @@ const FILTERS = [{
     usbProductId : PRODUCT_ID
 }]
 
+const ids_to_send = ["led-intensity"];
+
 // Connects to the first Pico on the list or asks user to select one if none is already connected.
 // Returns the open port for communication.
 async function connectToSerial(){
-    const ports = await navigator.serial.getPorts(); // { filters: FILTERS }
+    const ports = await navigator.serial.getPorts(); //{ filters: FILTERS }
     const isConnected = ports.length > 0;
-    console.log(`Pico seen (by switch led) : ${isConnected}.`);
-    const port = isConnected ? ports[0] : await navigator.serial.requestPort(); // { filters: FILTERS }
+    console.log(`Pico seen (by send params) : ${isConnected}.`);
+    const port = isConnected ? ports[0] : await navigator.serial.requestPort(); //{ filters: FILTERS }
 
     // If the port is not open, open it
     if (port.writable == null){
@@ -24,13 +26,23 @@ async function connectToSerial(){
 }
 
 // Toggles the data-lake variable test-antoine and switches led ON or OFF accordingly.
-async function switch_led(){
+async function send_params(id) {
     const port = await connectToSerial();
     const writer = port.writable.getWriter();
-    let data;
-    window.cockpit.setDataLakeVariableData('"led-intensity"', !window.cockpit.dataLakeVariableData["led-intensity"]);
+
+    let message = "";
+    Object.keys(window.cockpit.getAllDataLakeVariablesInfo()).forEach((id)=>{
+        if (ids_to_send.includes(id)){
+            const value = window.cockpit.dataLakeVariableData[id];
+            message += `${id} ${value}\n`;
+        }
+    });
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(message);
+
     await writer.write(data);
     writer.releaseLock();
-}
+  }
 
-switch_led();
+send_params();

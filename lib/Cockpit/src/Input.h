@@ -1,16 +1,6 @@
 #include <Arduino.h>
-
-struct Pin {
-    uint8_t pin_nb;
-    bool has_ADS;
-    ADS1115* ADS = nullptr;
-
-    Pin(uint8_t pin_nb)
-        : pin_nb(pin_nb), has_ADS(false), ADS(nullptr) {}
-
-    Pin(uint8_t pin_nb, ADS1115& ads)
-        : pin_nb(pin_nb), has_ADS(true), ADS(&ads) {}
-};
+#include <structs.h>
+#include <pio_encoder.h>
 
 class Input{
     public:
@@ -80,6 +70,86 @@ class AxisInput : public Input {
             }
             else if (num_axis == 5){
                 Joystick.Zrotate(1024*state);
+            }
+        }
+};
+
+
+class ButtonInput : public Input {
+    public:
+        uint8_t num_button;
+
+        ButtonInput(String input_id, Pin input_pin, uint8_t input_num_button)
+         : Input(input_id, input_pin) {
+            num_button = input_num_button > 31 ? 31 : input_num_button;
+            num_button ++; //Indexing starts at 0 on Cockpit but it starts at 1 for the Joystick lib
+        }
+
+        void begin() override{
+            pinMode(pin.pin_nb, pin.pin_mode);
+        }
+
+        void read_state() override{
+            state = digitalRead(pin.pin_nb);
+        }
+
+        void send_state() override{
+            Joystick.button(num_button, state);
+        }
+
+};
+
+
+class EncoderInput : public Input{
+    private:
+        int prev_encoder_counter = 0;
+        bool is_stable_state(int counter){return counter%4==0;}
+
+    public:
+        uint8_t decr_button;
+        uint8_t incr_button;
+        PioEncoder encoder;
+
+        EncoderInput(String input_id, Pin input_pin, uint8_t input_decr_button, uint8_t input_incr_button)
+         : Input(input_id, input_pin), encoder{input_pin.pin_nb}{
+            decr_button = input_decr_button > 31 ? 31 : input_decr_button;
+            decr_button ++;
+            incr_button = input_incr_button > 31 ? 31 : input_incr_button;
+            incr_button ++;
+        }
+
+        void begin() override{
+            encoder.begin();
+        }
+
+        void read_state() override{
+            int encoder_counter = encoder.getCount();
+            if (encoder_counter != prev_encoder_counter){
+                if (is_stable_state(prev_encoder_counter)){
+                    if (encoder_counter > prev_encoder_counter){
+                        state = 1;
+                    }
+                    else{
+                        state = -1;
+                    }
+                }
+                else if (is_stable_state(encoder_counter)){
+                    state = 0;
+                }
+            }
+            prev_encoder_counter = encoder_counter;
+        }
+
+        void send_state() override{
+            if (state < 0){
+                Joystick.button(decr_button, true);
+            }
+            else if (state > 0){
+                Joystick.button(incr_button,true);
+            }
+            else{
+                Joystick.button(decr_button, false);
+                Joystick.button(incr_button, false);
             }
         }
 };

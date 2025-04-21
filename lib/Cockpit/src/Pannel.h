@@ -1,5 +1,6 @@
 #include <Input.h>
 #include <Output.h>
+#include <structs.h>
 #include <vector>
 #include <memory>
 #include <initializer_list>
@@ -8,19 +9,6 @@
 // Delimiters
 #define END_OF_LINE '\n'
 #define WORD_DELIMITER ' '
-
-struct ADSSettings {
-    bool enabled;
-    uint8_t gain_ADS;
-    ADS1115* ADS = nullptr;
-
-    ADSSettings()
-        : enabled(false), gain_ADS(0), ADS(nullptr) {}
-
-    ADSSettings(uint8_t gain, ADS1115& ads)
-        : enabled(true), gain_ADS(gain), ADS(&ads) {}
-};
-
 
 class Panel{
     private:
