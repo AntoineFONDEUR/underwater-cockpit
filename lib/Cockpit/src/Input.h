@@ -123,8 +123,8 @@ class ButtonInput : public Input {
 
 class EncoderInput : public Input{
     private:
-        int prev_encoder_counter = 0;
-        bool is_stable_state(int counter){return counter%4==0;}
+        int prev_stable_counter = 0;
+        int counter = 0;
 
     public:
         uint8_t decr_button;
@@ -143,34 +143,43 @@ class EncoderInput : public Input{
             encoder.begin();
         }
 
-        void read_state() override{
-            int encoder_counter = encoder.getCount();
-            if (encoder_counter != prev_encoder_counter){
-                if (is_stable_state(prev_encoder_counter)){
-                    if (encoder_counter > prev_encoder_counter){
-                        state = 1;
-                    }
-                    else{
-                        state = -1;
-                    }
-                }
-                else if (is_stable_state(encoder_counter)){
-                    state = 0;
-                }
-            }
-            prev_encoder_counter = encoder_counter;
+        void read_state() override {
+            counter = encoder.getCount();
+
+            int current_stable = counter - (counter % 4);
+            int steps = (current_stable - prev_stable_counter) / 4;
+
+            state = steps;
+            prev_stable_counter = current_stable;
         }
 
-        void send_state() override{
-            if (state < 0){
-                Joystick.button(decr_button, true);
+        void send_state() override {
+            static int pending_steps = 0;
+            static bool pressing = false;
+            static uint8_t current_button = 0;
+            static unsigned long press_start_time = 0;
+
+            pending_steps += state;
+            state = 0;
+
+            if (!pressing && pending_steps != 0) {
+                pressing = true;
+                press_start_time = millis();
+
+                if (pending_steps > 0) {
+                    current_button = incr_button;
+                    pending_steps--;
+                } else {
+                    current_button = decr_button;
+                    pending_steps++;
+                }
+
+                Joystick.button(current_button, true);
             }
-            else if (state > 0){
-                Joystick.button(incr_button,true);
-            }
-            else{
-                Joystick.button(decr_button, false);
-                Joystick.button(incr_button, false);
+
+            if (pressing && (millis() - press_start_time >= 30)) {
+                Joystick.button(current_button, false);
+                pressing = false;
             }
         }
 };
