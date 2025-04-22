@@ -76,21 +76,42 @@ class AxisInput : public Input {
 
 
 class ButtonInput : public Input {
+    private:
+        uint8_t debounce_delay;
+        uint8_t reading;
+        uint8_t previous_state;
     public:
         uint8_t num_button;
 
-        ButtonInput(String input_id, Pin input_pin, uint8_t input_num_button)
-         : Input(input_id, input_pin) {
+        ButtonInput(String input_id, Pin input_pin, uint8_t input_num_button, uint8_t input_debounce_delay = 20)
+         : Input(input_id, input_pin), debounce_delay{input_debounce_delay}{
             num_button = input_num_button > 31 ? 31 : input_num_button;
             num_button ++; //Indexing starts at 0 on Cockpit but it starts at 1 for the Joystick lib
         }
 
         void begin() override{
             pinMode(pin.pin_nb, pin.pin_mode);
+            reading = digitalRead(pin.pin_nb);
+            previous_state = reading;
         }
 
         void read_state() override{
-            state = digitalRead(pin.pin_nb);
+            static uint8_t last_debounce_time = 0;
+
+            int reading = digitalRead(pin.pin_nb);
+
+            if (reading != previous_state) {
+                last_debounce_time = millis();
+            }
+
+            if ((millis() - last_debounce_time) > debounce_delay) {
+                if (reading != state) {
+                    state = reading;
+                }
+            }
+
+            previous_state = reading;
+
         }
 
         void send_state() override{
