@@ -16,7 +16,8 @@ Panel myPanel {
     new ButtonInput("encoder_switch", Pin{15, INPUT_PULLDOWN}, 1),
     new ButtonInput("left_joystick_switch", Pin{3, INPUT_PULLDOWN}, 2),
     new ButtonInput("right_joystick_switch", Pin{28, INPUT_PULLDOWN}, 3),
-    new EncoderInput("encoder", Pin{1}, 4, 5)
+    new EncoderInput("encoder", Pin{1}, 4, 5),
+    // new EncoderInput("encoder", Pin{3}, 6, 7)
   },
   {
     new Led("led-intensity", Pin{26}),

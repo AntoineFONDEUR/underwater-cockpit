@@ -145,8 +145,10 @@ class EncoderInput : public Input{
 
         void read_state() override {
             counter = encoder.getCount();
-
-            int current_stable = counter - (counter % 4);
+            //Serial.println(counter);
+            int diff = counter - prev_stable_counter;
+            Serial.println(diff);
+            int current_stable =  (-4 < diff & diff < 4) ? prev_stable_counter : counter  - (counter % 4);
             int steps = (current_stable - prev_stable_counter) / 4;
 
             state = steps;
