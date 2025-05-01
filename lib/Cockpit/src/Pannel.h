@@ -16,7 +16,6 @@ class Panel{
         int nb_of_outputs;
         std::vector<std::unique_ptr<Input>> inputs;
         std::vector<std::unique_ptr<Output>> outputs;
-        ADSSettings ADS_settings;
 
         //Serial communication methods
         String read_line() {
@@ -49,9 +48,8 @@ class Panel{
     public:
         Panel(
             std::initializer_list<Input*> lst_inputs,
-            std::initializer_list<Output*> lst_outputs,
-            ADSSettings input_ADS_settings)
-         : nb_of_inputs(lst_inputs.size()), nb_of_outputs(lst_outputs.size()), ADS_settings{input_ADS_settings}
+            std::initializer_list<Output*> lst_outputs)
+         : nb_of_inputs(lst_inputs.size()), nb_of_outputs(lst_outputs.size())
         {
             for (auto ptr : lst_inputs) {
                 inputs.emplace_back(ptr);
@@ -65,12 +63,7 @@ class Panel{
 
             if (nb_of_inputs > 0){
                 Joystick.begin();
-            }
-
-            if (ADS_settings.enabled){
-                Wire.begin();
-                ADS_settings.ADS->begin();
-                ADS_settings.ADS->setGain(ADS_settings.gain_ADS);
+                Joystick.useManualSend(true);
             }
 
             for (int i=0; i<nb_of_inputs; i++){

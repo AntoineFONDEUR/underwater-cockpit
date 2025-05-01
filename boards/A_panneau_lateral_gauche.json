@@ -4,7 +4,7 @@
           "earlephilhower": {
               "boot2_source": "boot2_w25q16jvxq_4_padded_checksum.S",
               "usb_vid": "0x2E8A",
-              "usb_pid": "0x0002"
+              "usb_pid": "0x0001"
           }
       },
       "core": "earlephilhower",
@@ -32,7 +32,7 @@
   "frameworks": [
       "arduino"
   ],
-  "name": "Panneau 2",
+  "name": "A Panneau Lateral Gauche",
   "upload": {
       "maximum_ram_size": 262144,
       "maximum_size": 16777216,
@@ -51,5 +51,5 @@
       ]
   },
   "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
-  "vendor": "UnderWater"
+  "vendor": "UW"
 }
