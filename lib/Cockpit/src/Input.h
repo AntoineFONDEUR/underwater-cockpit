@@ -19,9 +19,9 @@ class Input{
 
 class AxisInput : public Input {
     private:
-        float prev_state = 0;
         float dead_zone;
         bool slider;
+        float prev_state = -42.;
         uint16_t get_raw_data(){
             return pin.has_ADS ? pin.ADS->readADC(pin.pin_nb) : analogRead(pin.pin_nb);
         }
@@ -31,6 +31,7 @@ class AxisInput : public Input {
         uint16_t min_range;
         uint16_t max_range;
         uint8_t num_axis;
+        float maximum_variation;
 
         AxisInput(
             String input_id,
@@ -40,9 +41,10 @@ class AxisInput : public Input {
             bool input_slider = false,
             uint16_t input_min_range = 0,
             uint16_t input_max_range = 1024,
-            bool input_invert = false)
+            bool input_invert = false,
+            float input_maximum_variation = 0.5)
          : Input(input_id, input_pin), min_range{input_min_range},max_range{input_max_range},invert{input_invert},
-           dead_zone{input_dead_zone}, slider{input_slider}{
+           dead_zone{input_dead_zone}, slider{input_slider}, maximum_variation(input_maximum_variation){
             num_axis = input_num_axis > 5 ? 5 : input_num_axis; //Only six available axis using this Joystick lib
          }
 
@@ -55,16 +57,28 @@ class AxisInput : public Input {
         void read_state() override{
             float raw_data = get_raw_data();
             raw_state = raw_data;
+            // normalize and reverse as needed :
             float normalized_data = (raw_data-min_range)/(max_range-min_range);
             state = invert ? 1.-normalized_data : normalized_data;
+            // dead-zone for joysticks
             if (!slider){
                 state = ( - dead_zone < (0.5 - state) & (0.5 - state) < dead_zone ) ? 0.5 : state;
             }
-            else{
-                // float diff = state - prev_state;
-                // state = (- dead_zone < diff & diff < dead_zone) ? prev_state : state;
+            // cut off fast changes
+            if (prev_state<-40.){
+                prev_state = state;
             }
-            prev_state = state;
+            if (id == "slider"){
+                Serial.println(state);
+                Serial.println(prev_state);
+            }
+            if (!(- maximum_variation <= state-prev_state & state-prev_state <= maximum_variation)){
+                Serial.print(id); Serial.print(" going too fast: "); Serial.println(state-prev_state);
+                state = prev_state;
+            }
+            else{
+                prev_state = state;
+            }
         }
 
         void send_state() override{
@@ -164,7 +178,6 @@ class EncoderInput : public Input{
 
         void read_state() override {
             counter = encoder.getCount();
-            //Serial.println(counter);
             int diff = counter - prev_stable_counter;
             int current_stable =  (-4 < diff & diff < 4) ? prev_stable_counter : counter  - (counter % 4);
             int steps = (current_stable - prev_stable_counter) / 4;

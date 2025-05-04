@@ -4,13 +4,14 @@
 
 Panel myPanel {
   {
-    new AxisInput("gain-pot", Pin{29},0,0,true,0,1024),
-    new ButtonInput("switch7", Pin{0, INPUT_PULLDOWN}, 6),
-    new ButtonInput("switch8", Pin{7, INPUT_PULLDOWN}, 7),
-    new ButtonInput("switch5", Pin{15, INPUT_PULLDOWN}, 4),
-    new ButtonInput("switch6", Pin{14, INPUT_PULLDOWN}, 5),
-    new ButtonInput("switch7", Pin{0, INPUT_PULLDOWN}, 6),
-    new ButtonInput("switch8", Pin{7, INPUT_PULLDOWN}, 7),
+    new AxisInput("gain-pot", Pin{29},0,0,true,0,1024,true),
+    new ButtonInput("switch1", Pin{0, INPUT_PULLDOWN}, 0),
+    new ButtonInput("switch2", Pin{7, INPUT_PULLDOWN}, 1),
+    new ButtonInput("switch3", Pin{15, INPUT_PULLDOWN}, 2),
+    new ButtonInput("switch4", Pin{14, INPUT_PULLDOWN}, 3),
+    new ButtonInput("switch5", Pin{2, INPUT_PULLDOWN}, 4),
+    new ButtonInput("switch6", Pin{3, INPUT_PULLDOWN}, 5),
+    new ButtonInput("switch7", Pin{4, INPUT_PULLDOWN}, 6),
   },
   {
     new PowerPin("low_pin", Pin{5}, LOW, 1),

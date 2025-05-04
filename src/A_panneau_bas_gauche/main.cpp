@@ -13,7 +13,6 @@ Panel myPanel {
     new AxisInput("lights2", Pin{27}, 1, DEAD_ZONE, true , 2, 1023, true),
     new AxisInput("lights1", Pin{26}, 2, DEAD_ZONE, true , 2, 1023, true),
     new AxisInput("joystick_tilt", Pin{0, ADS1}, 3, DEAD_ZONE, false, 0, 29300),
-    // new AxisInput("joystick_h", Pin{1, ADS1}, 4, DEAD_ZONE, false, 0, 29300, true),
     new AxisInput("joystick_v", Pin{2, ADS1}, 4, DEAD_ZONE, false, 0, 29300, true),
     new AxisInput("slider", Pin{3, ADS1}, 5, DEAD_ZONE, true, 0, 29200)
   },

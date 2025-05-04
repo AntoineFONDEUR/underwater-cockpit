@@ -11,11 +11,12 @@ const float DEAD_ZONE = 0.05;
 Panel myPanel {
   {
     new AxisInput("slider", Pin{0, ADS1}, 0, DEAD_ZONE, true , 32, 27000),
-    new AxisInput("joystick_right_h", Pin{1, ADS1}, 1, DEAD_ZONE, false, 32, 27000),
-    new AxisInput("joystick_right_v", Pin{3, ADS1}, 3, DEAD_ZONE, false,32, 27000, true),
-    new AxisInput("joystick_right_tilt", Pin{2, ADS1}, 2, DEAD_ZONE, false,32, 25500, true),
-    new AxisInput("joystick_left_h", Pin{1, ADS2}, 4, DEAD_ZONE, false,32, 27000),
-    new AxisInput("joystick_left_v", Pin{2, ADS2}, 5, DEAD_ZONE, false,32, 27000, true),
+    // new AxisInput("joystick_right_h", Pin{1, ADS1}, 1, DEAD_ZONE, false, 32, 27000),
+    // new AxisInput("joystick_right_v", Pin{3, ADS1}, 3, DEAD_ZONE, false,32, 27000, true),
+    // new AxisInput("joystick_right_tilt", Pin{2, ADS1}, 2, DEAD_ZONE, false,32, 25500, true),
+    new AxisInput("joystick_left_h", Pin{1, ADS2}, 1, DEAD_ZONE, false,32, 27000),
+    new AxisInput("joystick_left_v", Pin{2, ADS2}, 2, DEAD_ZONE, false,32, 27000, true),
+    new AxisInput("joystick_left_tilt", Pin{0, ADS2}, 3, DEAD_ZONE, false,32, 28200, true),
     new ButtonInput("switch_mode1", Pin{11, INPUT_PULLDOWN}, 0),
     new ButtonInput("switch_mode2", Pin{10, INPUT_PULLDOWN}, 1),
     new ButtonInput("switch_mode3", Pin{15, INPUT_PULLDOWN}, 2),
@@ -50,7 +51,6 @@ void loop() {
   // Inputs
   myPanel.read_states();
   myPanel.send_states();
-
 
   // Ouputs
   myPanel.receive_target_states();
