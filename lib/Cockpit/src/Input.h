@@ -7,6 +7,7 @@ class Input{
         String id;
         Pin pin;
         float state;
+        float raw_state = 0;
 
         Input(String input_id, Pin input_pin)
          : id{input_id}, pin{input_pin} {}
@@ -53,6 +54,7 @@ class AxisInput : public Input {
 
         void read_state() override{
             float raw_data = get_raw_data();
+            raw_state = raw_data;
             float normalized_data = (raw_data-min_range)/(max_range-min_range);
             state = invert ? 1.-normalized_data : normalized_data;
             if (!slider){
@@ -85,6 +87,8 @@ class AxisInput : public Input {
             else if (num_axis == 5){
                 Joystick.Zrotate(1024*state);
             }
+            Joystick.send_now();
+
         }
 };
 
@@ -130,6 +134,7 @@ class ButtonInput : public Input {
 
         void send_state() override{
             Joystick.button(num_button, state);
+            Joystick.send_now();
         }
 
 };
@@ -161,7 +166,6 @@ class EncoderInput : public Input{
             counter = encoder.getCount();
             //Serial.println(counter);
             int diff = counter - prev_stable_counter;
-            Serial.println(diff);
             int current_stable =  (-4 < diff & diff < 4) ? prev_stable_counter : counter  - (counter % 4);
             int steps = (current_stable - prev_stable_counter) / 4;
 
@@ -191,10 +195,14 @@ class EncoderInput : public Input{
                 }
 
                 Joystick.button(current_button, true);
+                Joystick.send_now();
+
             }
 
             if (pressing && (millis() - press_start_time >= 30)) {
                 Joystick.button(current_button, false);
+                Joystick.send_now();
+
                 pressing = false;
             }
         }

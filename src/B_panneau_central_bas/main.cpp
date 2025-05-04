@@ -25,13 +25,13 @@ Panel myPanel {
     new ButtonInput("switch_mode7", Pin{9, INPUT_PULLDOWN}, 6)
   },
   {
-    new Led("led-mode1", Pin{0}),
-    new Led("led-mode2", Pin{1}),
-    new Led("led-mode3", Pin{2}),
-    new Led("led-mode4", Pin{3}),
-    new Led("led-mode5", Pin{6}),
-    new Led("led-mode6", Pin{7}),
-    new Led("led-mode7", Pin{8}),
+    new Led("led-mode1", Pin{0}, 1),
+    new Led("led-mode2", Pin{1}, 6),
+    new Led("led-mode3", Pin{2}, 5),
+    new Led("led-mode4", Pin{3}, 0),
+    new Led("led-mode5", Pin{6}, 4),
+    new Led("led-mode6", Pin{7}, 3),
+    new Led("led-mode7", Pin{8}, 2)
   }
 };
 
@@ -50,8 +50,7 @@ void loop() {
   // Inputs
   myPanel.read_states();
   myPanel.send_states();
-  Joystick.send_now();
-  //myPanel.show_states();
+
 
   // Ouputs
   myPanel.receive_target_states();

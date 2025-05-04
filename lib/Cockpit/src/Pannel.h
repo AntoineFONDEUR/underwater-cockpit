@@ -90,19 +90,23 @@ class Panel{
 
         void show_states(){
             for (int i=0; i<nb_of_inputs; i++){
-                Serial.print(inputs[i]->id); Serial.print(": "); Serial.print(inputs[i]->state); Serial.print("\t");
+                Serial.print(inputs[i]->id); Serial.print(": "); Serial.print(inputs[i]->raw_state); Serial.print("\t");
             }
             Serial.println();
         }
 
         //Operations on outputs
         void receive_target_states(){
-            String received = read_line();
-            if (received.length() > 0) {
-                String output_id;
-                uint16_t output_target_state;
-                parse_update_msg(received, output_id, output_target_state);
-                get_output(output_id)->target_state = output_target_state;
+            if (Serial.available() > 4) {
+                uint32_t message = 0;
+                for (int i = 0; i < 4; i++) {
+                    message |= ((uint32_t)Serial.read() << (8 * i));
+                }
+
+                for (int i = 0; i < nb_of_outputs; i++) {
+                    int bit_position = outputs[i]->offset; // Assuming each Output has a known offset
+                    outputs[i]->target_state = (message >> bit_position) & 0x01;
+                }
             }
         }
 

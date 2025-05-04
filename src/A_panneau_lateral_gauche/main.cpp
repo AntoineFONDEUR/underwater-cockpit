@@ -1,47 +1,34 @@
 #include <Arduino.h>
-#include <ADS1X15.h>
 #include <Joystick.h>
 #include <Pannel.h>
 
-ADS1115 ADS1(0x48);
-ADS1115 ADS2(0x49);
-
 Panel myPanel {
   {
-    new AxisInput("joystick1_h", Pin{0, ADS1}, 0, 0, 32767),
-    new AxisInput("joystick1_v", Pin{1, ADS1}, 1, 0, 32767),
-    new AxisInput("joystick1_tilt", Pin{2, ADS1}, 2, 0, 32767),
-    new AxisInput("joystick2_h", Pin{3, ADS1}, 3, 0, 32767),
-    new AxisInput("joystick2_v", Pin{1, ADS2}, 4, 0, 32767),
-    new AxisInput("joystick2_tilt", Pin{2, ADS2}, 5, 0, 32767),
-    new ButtonInput("switch_mode1", Pin{9, INPUT_PULLDOWN}, 0),
-    new ButtonInput("switch_mode2", Pin{10, INPUT_PULLDOWN}, 1),
-    new ButtonInput("switch_mode3", Pin{11, INPUT_PULLDOWN}, 2),
-    new ButtonInput("switch_mode4", Pin{12, INPUT_PULLDOWN}, 3),
-    new ButtonInput("switch_mode5", Pin{13, INPUT_PULLDOWN}, 4),
-    new ButtonInput("switch_mode6", Pin{14, INPUT_PULLDOWN}, 5),
-    new ButtonInput("switch_mode7", Pin{15, INPUT_PULLDOWN}, 6)
+    new AxisInput("gain-pot", Pin{29},0,0,true,0,1024),
+    new ButtonInput("switch7", Pin{0, INPUT_PULLDOWN}, 6),
+    new ButtonInput("switch8", Pin{7, INPUT_PULLDOWN}, 7),
+    new ButtonInput("switch5", Pin{15, INPUT_PULLDOWN}, 4),
+    new ButtonInput("switch6", Pin{14, INPUT_PULLDOWN}, 5),
+    new ButtonInput("switch7", Pin{0, INPUT_PULLDOWN}, 6),
+    new ButtonInput("switch8", Pin{7, INPUT_PULLDOWN}, 7),
   },
   {
-    // new Led("led_mode1", Pin{13}),
-    // new Led("led_mode2", Pin{12}),
-    // new Led("led_mode3", Pin{11}),
-    // new Led("led_mode4", Pin{10}),
-    // new Led("led_mode5", Pin{9}),
-    // new Led("led_mode6", Pin{8}),
-    // new Led("led_mode7", Pin{7}),
+    new PowerPin("low_pin", Pin{5}, LOW, 1),
+    new PowerPin("high_pin", Pin{6}, HIGH, 1),
+    new Led("led-arm", Pin{1},0),
+    new Led("led1", Pin{7},1),
+    new Led("led2", Pin{8},2),
+    new Led("led3", Pin{9},3),
+    new Led("led4", Pin{10},4),
+    new Led("led5", Pin{11},5),
+    new Led("led6", Pin{12},6),
+    new Led("led7", Pin{13},7),
   }
 };
 
 void setup() {
   Serial.begin(115200);
   myPanel.begin();
-
-  Wire.begin();
-  ADS1.begin();
-  ADS1.setGain(1);
-  ADS2.begin();
-  ADS2.setGain(1);
 }
 
 void loop() {
