@@ -42,7 +42,7 @@ class AxisInput : public Input {
             uint16_t input_min_range = 0,
             uint16_t input_max_range = 1024,
             bool input_invert = false,
-            float input_maximum_variation = 0.5)
+            float input_maximum_variation = 1.)
          : Input(input_id, input_pin), min_range{input_min_range},max_range{input_max_range},invert{input_invert},
            dead_zone{input_dead_zone}, slider{input_slider}, maximum_variation(input_maximum_variation){
             num_axis = input_num_axis > 5 ? 5 : input_num_axis; //Only six available axis using this Joystick lib
@@ -147,6 +147,7 @@ class ButtonInput : public Input {
         }
 
         void send_state() override{
+            state = pin.pin_mode == INPUT_PULLUP ? 1 - state : state;
             Joystick.button(num_button, state);
             Joystick.send_now();
         }

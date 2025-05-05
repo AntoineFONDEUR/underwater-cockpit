@@ -96,15 +96,15 @@ class Panel{
         }
 
         //Operations on outputs
-        void receive_target_states(){
-            if (Serial.available() > 4) {
+        void receive_target_states() {
+            if (Serial.available() >= 4) {
                 uint32_t message = 0;
                 for (int i = 0; i < 4; i++) {
                     message |= ((uint32_t)Serial.read() << (8 * i));
                 }
 
                 for (int i = 0; i < nb_of_outputs; i++) {
-                    int bit_position = outputs[i]->offset; // Assuming each Output has a known offset
+                    int bit_position = outputs[i]->offset;
                     outputs[i]->target_state = (message >> bit_position) & 0x01;
                 }
             }
